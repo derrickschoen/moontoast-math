@@ -111,9 +111,9 @@ abstract class AbstractBigNumber implements BigNumberInterface
         $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
         $outNumber = '';
 
-        while (bccomp($number, $toBase) >= 0) {
-            $remainder = bcmod($number, $toBase);
-            $number = bcdiv($number, $toBase, 0);
+        while (\bccomp($number, $toBase) >= 0) {
+            $remainder = \bcmod($number, $toBase);
+            $number = \bcdiv($number, $toBase, 0);
             $outNumber = $chars[(int) $remainder] . $outNumber;
         }
 
@@ -135,18 +135,18 @@ abstract class AbstractBigNumber implements BigNumberInterface
         }
 
         $number = (string) $number;
-        $len = strlen($number);
+        $len = \strlen($number);
         $base10Num = '0';
 
         for ($i = $len; $i > 0; $i--) {
-            $c = ord($number[$len - $i]);
+            $c = \ord($number[$len - $i]);
 
-            if ($c >= ord('0') && $c <= ord('9')) {
-                $c -= ord('0');
-            } elseif ($c >= ord('A') && $c <= ord('Z')) {
-                $c -= ord('A') - 10;
-            } elseif ($c >= ord('a') && $c <= ord('z')) {
-                $c -= ord('a') - 10;
+            if ($c >= \ord('0') && $c <= \ord('9')) {
+                $c -= \ord('0');
+            } elseif ($c >= \ord('A') && $c <= \ord('Z')) {
+                $c -= \ord('A') - 10;
+            } elseif ($c >= \ord('a') && $c <= \ord('z')) {
+                $c -= \ord('a') - 10;
             } else {
                 continue;
             }
@@ -155,7 +155,7 @@ abstract class AbstractBigNumber implements BigNumberInterface
                 continue;
             }
 
-            $base10Num = bcadd(bcmul($base10Num, $fromBase, 0), (string) $c, 0);
+            $base10Num = \bcadd(\bcmul($base10Num, $fromBase, 0), (string) $c, 0);
         }
 
         return $base10Num;
@@ -169,6 +169,6 @@ abstract class AbstractBigNumber implements BigNumberInterface
      */
     public static function setDefaultScale($scale)
     {
-        ini_set('bcmath.scale', $scale);
+        \ini_set('bcmath.scale', $scale);
     }
 }
