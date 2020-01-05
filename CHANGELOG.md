@@ -1,5 +1,11 @@
 # moontoast/math Changelog
 
+## 1.2.1
+
+_Released: 2020-01-04_
+
+* Package is *abandoned*. Please transition to [brick/math](https://github.com/brick/math).
+
 ## 1.2.0
 
 _Released: 2020-01-04_

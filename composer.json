@@ -29,10 +29,11 @@
     "autoload": {
         "psr-4": {
             "Moontoast\\Math\\": "src/Moontoast/Math",
-            "Moontoast\\Math\\Exception\\": "src/Moontoast/Math/Exception" 
+            "Moontoast\\Math\\Exception\\": "src/Moontoast/Math/Exception"
         }
     },
     "autoload-dev": {
         "psr-4": {"Moontoast\\Math\\": "tests/Moontoast/Math"}
-    }
+    },
+    "abandoned": "brick/math"
 }
