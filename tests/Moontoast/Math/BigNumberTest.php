@@ -764,14 +764,39 @@ class BigNumberTest extends \PHPUnit_Framework_TestCase
      * will return a -1, meaning -0.000 is less than 0.000, but -0 compared to
      * 0 will return a 0, meaning the two are equal. This is odd, but it is the
      * expected behavior.
+     *
+     * NOTE (2019-01-04): The negative zero behavior was fixed in PHP bug #46781
+     * and fixed in commit php/php-src@9aa6898b9b. It was first released in PHP
+     * 7.0.24 and 7.1.10. This test remains here for now and skips versions of
+     * PHP >= 7.
+     *
+     * @link https://bugs.php.net/bug.php?id=46781 BC math handles minus zero incorrectly
+     * @link https://github.com/php/php-src/commit/9aa6898b9b Fixed bug #46781
      */
     public function testNegativeZero()
     {
+        if (PHP_MAJOR_VERSION >= 7) {
+            $this->markTestSkipped('Skipping test on PHP >= 7');
+        }
+
         $bn = new BigNumber('-0.0000005', 3);
 
         $this->assertSame('-0.000', $bn->getValue());
         $this->assertEquals(-1, $bn->signum());
         $this->assertTrue($bn->isNegative());
+    }
+
+    public function testPhpBugFix46781()
+    {
+        if (PHP_MAJOR_VERSION < 7) {
+            $this->markTestSkipped('Skipping test on PHP < 7');
+        }
+
+        $bn = new BigNumber('-0.0000005', 3);
+
+        $this->assertSame('-0.000', $bn->getValue());
+        $this->assertEquals(0, $bn->signum());
+        $this->assertFalse($bn->isNegative());
     }
 
     public function testConvertFromBase10AlwaysUsesZeroScale()
