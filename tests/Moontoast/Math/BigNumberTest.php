@@ -7,7 +7,7 @@ class BigNumberTest extends TestCase
 {
     protected function setUp()
     {
-        ini_set('bcmath.scale', 0);
+        bcscale(0);
     }
 
     /**
@@ -114,6 +114,10 @@ class BigNumberTest extends TestCase
         $this->assertEquals(0, $bn2->compareTo(2147483647));
         $this->assertEquals(1, $bn1->compareTo($bn2));
         $this->assertEquals(-1, $bn2->compareTo($bn1));
+
+        $bn = new BigNumber('-0.0', 1);
+
+        $this->assertEquals(0, $bn->compareTo($bn));
     }
 
     /**
@@ -755,7 +759,11 @@ class BigNumberTest extends TestCase
     {
         BigNumber::setDefaultScale(23);
 
-        $this->assertEquals(23, ini_get('bcmath.scale'));
+        $scale = version_compare(PHP_VERSION, '7.3.0') >= 0 || !extension_loaded('bcmath') ?
+            bcscale() :
+            max(0, strlen(bcadd('0', '0')) - 2);
+
+        $this->assertEquals(23, $scale);
     }
 
     /**
@@ -767,20 +775,16 @@ class BigNumberTest extends TestCase
      * 0 will return a 0, meaning the two are equal. This is odd, but it is the
      * expected behavior.
      *
-     * NOTE (2019-01-04): The negative zero behavior was fixed in PHP bug #46781
+     * NOTE (2019-01-04): The negative zero behavior was reported in PHP bug #46781
      * and fixed in commit php/php-src@9aa6898b9b. It was first released in PHP
-     * 7.0.24 and 7.1.10. This test remains here for now and skips versions of
-     * PHP >= 7.
+     * 7.0.24 and 7.1.10. This test remains here to ensure this library maintains
+     * BC with earlier versions.
      *
      * @link https://bugs.php.net/bug.php?id=46781 BC math handles minus zero incorrectly
      * @link https://github.com/php/php-src/commit/9aa6898b9b Fixed bug #46781
      */
     public function testNegativeZero()
     {
-        if (PHP_MAJOR_VERSION >= 7) {
-            $this->markTestSkipped('Skipping test on PHP >= 7');
-        }
-
         $bn = new BigNumber('-0.0000005', 3);
 
         $this->assertSame('-0.000', $bn->getValue());
@@ -788,23 +792,10 @@ class BigNumberTest extends TestCase
         $this->assertTrue($bn->isNegative());
     }
 
-    public function testPhpBugFix46781()
-    {
-        if (PHP_MAJOR_VERSION < 7) {
-            $this->markTestSkipped('Skipping test on PHP < 7');
-        }
-
-        $bn = new BigNumber('-0.0000005', 3);
-
-        $this->assertSame('-0.000', $bn->getValue());
-        $this->assertEquals(0, $bn->signum());
-        $this->assertFalse($bn->isNegative());
-    }
-
     public function testConvertFromBase10AlwaysUsesZeroScale()
     {
         // Set global scale to 4; convertFromBase10() should not use this
-        ini_set('bcmath.scale', 4);
+        bcscale(4);
 
         $toBase = array(2, 8, 10, 16, 36);
         $convertValues = array(10, 27, 39, 037, 0x5F, '10', '27', '39');
@@ -826,7 +817,7 @@ class BigNumberTest extends TestCase
     public function testConvertToBase10AlwaysUsesZeroScale()
     {
         // Set global scale to 4; convertToBase10() should not use this
-        ini_set('bcmath.scale', 4);
+        bcscale(4);
 
         $fromBase = array(2, 8, 10, 16, 36);
         $convertValues = array(10, 27, 39, 037, 0x5F, '10', '27', '39', '5F', '5f', '3XYZ', '3xyz', '5f$@');

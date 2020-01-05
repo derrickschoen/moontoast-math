@@ -1,22 +1,84 @@
 language: php
 
 php:
+  - 5.3
   - 5.4
   - 5.5
   - 5.6
   - 7.0
   - 7.1
   - 7.2
-  - hhvm
+  - 7.3
+  - 7.4
   - nightly
 
 matrix:
   include:
     - php: 5.3
       dist: precise
+    - php: 5.3
+      dist: precise
+      env:
+        - BCMATH="off"
+    - php: 5.4
+      dist: precise
+    - php: 5.4
+      dist: precise
+      env:
+        - BCMATH="off"
+    - php: 5.5
+      dist: trusty
+    - php: 5.5
+      dist: trusty
+      env:
+        - BCMATH="off"
+    - php: 5.6
+      dist: xenial
+    - php: 5.6
+      dist: xenial
+      env:
+        - BCMATH="off"
+    - php: 7.0
+      dist: xenial
+    - php: 7.0
+      dist: xenial
+      env:
+        - BCMATH="off"
+    - php: 7.1
+      dist: xenial
+    - php: 7.1
+      dist: xenial
+      env:
+        - BCMATH="off"
+    - php: 7.2
+      dist: xenial
+    - php: 7.2
+      dist: xenial
+      env:
+        - BCMATH="off"
+    - php: 7.3
+      dist: xenial
+    - php: 7.3
+      dist: xenial
+      env:
+        - BCMATH="off"
   allow_failures:
     - php: nightly
-    - php: hhvm
+
+sudo: false
+
+before_install:
+  - if [[ $BCMATH == "off" ]]; then
+        export PHP_BUILD_CONFIGURE_OPTS="--disable-bcmath";
+        git clone git://github.com/php-build/php-build.git $HOME/.phpenv/plugins/php-build;
+        travis_wait phpenv install --force `php -r "echo PHP_VERSION;"`;
+        phpenv rehash;
+        phpenv global `php -r "echo PHP_VERSION;"`;
+    fi
+  - php -i | grep bcmath
+
+install:
+  - travis_retry composer install --no-interaction --prefer-dist
 
 before_script:
   - composer install -n
@@ -27,4 +89,4 @@ script:
   - ./vendor/bin/phpcs src tests --standard=psr2 -sp
 
 after_script:
-  - if [[ $TEST_COVERAGE == 'true' ]]; then php vendor/bin/coveralls ; fi
+  - php vendor/bin/coveralls
