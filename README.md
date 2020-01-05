@@ -1,3 +1,6 @@
+_**PLEASE NOTE:** This package is abandoned. Please transition to
+[brick/math](https://github.com/brick/math)._
+
 # Moontoast Math Library
 
 [![Source Code][badge-source]][source]
