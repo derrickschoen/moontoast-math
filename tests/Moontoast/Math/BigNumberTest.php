@@ -1,4 +1,5 @@
 <?php
+
 namespace Moontoast\Math;
 
 use PHPUnit\Framework\TestCase;

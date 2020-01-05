@@ -3,7 +3,7 @@
         colors="true"
         backupGlobals="false">
     <testsuites>
-        <testsuite>
+        <testsuite name="moontoast/math">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
