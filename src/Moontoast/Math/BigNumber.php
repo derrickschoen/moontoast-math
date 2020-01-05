@@ -140,9 +140,18 @@ class BigNumber extends AbstractBigNumber
      */
     public function compareTo($number)
     {
-        return \bccomp(
+        $number = $this->filterNumber($number);
+        // http://bugs.php.net/46781 changed how bcmath compares minus zero. for BC purposes we emulate the old
+        // behavior, prior to the bug fix
+        if (preg_match('#^-?0\.0+?$#', $this->numberValue) || preg_match('#^-?0\.0+?$#', $number)) {
+            if ($this->numberValue[0] === $number[0]) {
+                return 0;
+            }
+            return $this->numberValue[0] === '-' ? -1 : 1;
+        }
+        return bccomp(
             $this->numberValue,
-            $this->filterNumber($number),
+            $number,
             $this->getScale()
         );
     }
@@ -229,9 +238,13 @@ class BigNumber extends AbstractBigNumber
     public function getScale()
     {
         if ($this->numberScale === null) {
-            return \ini_get('bcmath.scale');
+            if (version_compare(PHP_VERSION, '7.3.0') >= 0 || !extension_loaded('bcmath')) {
+                // @codeCoverageIgnoreStart
+                return (string) bcscale();
+                // @codeCoverageIgnoreEnd
+            }
+            return (string) max(0, strlen(bcadd('0', '0')) - 2);
         }
-
         return $this->numberScale;
     }
 
