@@ -79,7 +79,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function abs()
     {
-        $this->numberValue = ltrim($this->numberValue, '-');
+        $this->numberValue = \ltrim($this->numberValue, '-');
 
         return $this;
     }
@@ -94,7 +94,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function add($number)
     {
-        $this->numberValue = bcadd(
+        $this->numberValue = \bcadd(
             $this->numberValue,
             $this->filterNumber($number),
             $this->getScale()
@@ -116,13 +116,13 @@ class BigNumber extends AbstractBigNumber
 
         if ($this->isPositive()) {
             // 14 is the magic precision number
-            $number = bcadd($number, '0', 14);
-            if (substr($number, -15) != '.00000000000000') {
-                $number = bcadd($number, '1', 0);
+            $number = \bcadd($number, '0', 14);
+            if (\substr($number, -15) != '.00000000000000') {
+                $number = \bcadd($number, '1', 0);
             }
         }
 
-        $this->numberValue = bcadd($number, '0', 0);
+        $this->numberValue = \bcadd($number, '0', 0);
 
         return $this;
     }
@@ -140,7 +140,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function compareTo($number)
     {
-        return bccomp(
+        return \bccomp(
             $this->numberValue,
             $this->filterNumber($number),
             $this->getScale()
@@ -185,7 +185,7 @@ class BigNumber extends AbstractBigNumber
             throw new Exception\ArithmeticException('Division by zero');
         }
 
-        $this->numberValue = bcdiv(
+        $this->numberValue = \bcdiv(
             $this->numberValue,
             $number,
             $this->getScale()
@@ -207,13 +207,13 @@ class BigNumber extends AbstractBigNumber
 
         if ($this->isNegative()) {
             // 14 is the magic precision number
-            $number = bcadd($number, '0', 14);
-            if (substr($number, -15) != '.00000000000000') {
-                $number = bcsub($number, '1', 0);
+            $number = \bcadd($number, '0', 14);
+            if (\substr($number, -15) != '.00000000000000') {
+                $number = \bcsub($number, '1', 0);
             }
         }
 
-        $this->numberValue = bcadd($number, '0', 0);
+        $this->numberValue = \bcadd($number, '0', 0);
 
         return $this;
     }
@@ -229,7 +229,7 @@ class BigNumber extends AbstractBigNumber
     public function getScale()
     {
         if ($this->numberScale === null) {
-            return ini_get('bcmath.scale');
+            return \ini_get('bcmath.scale');
         }
 
         return $this->numberScale;
@@ -272,7 +272,7 @@ class BigNumber extends AbstractBigNumber
             throw new Exception\ArithmeticException('Division by zero');
         }
 
-        $this->numberValue = bcmod(
+        $this->numberValue = \bcmod(
             $this->numberValue,
             $number
         );
@@ -290,7 +290,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function multiply($number)
     {
-        $this->numberValue = bcmul(
+        $this->numberValue = \bcmul(
             $this->numberValue,
             $this->filterNumber($number),
             $this->getScale()
@@ -319,7 +319,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function pow($number)
     {
-        $this->numberValue = bcpow(
+        $this->numberValue = \bcpow(
             $this->numberValue,
             $this->filterNumber($number),
             $this->getScale()
@@ -358,7 +358,7 @@ class BigNumber extends AbstractBigNumber
             throw new Exception\ArithmeticException('Division by zero');
         }
 
-        $this->numberValue = bcpowmod(
+        $this->numberValue = \bcpowmod(
             $this->numberValue,
             $this->filterNumber($pow),
             $mod,
@@ -378,15 +378,15 @@ class BigNumber extends AbstractBigNumber
     {
         $original = $this->getValue();
         $floored = $this->floor()->getValue();
-        $diff = bcsub($original, $floored, 20);
+        $diff = \bcsub($original, $floored, 20);
 
         if ($this->isNegative()) {
-            $roundedDiff = round($diff, 0, PHP_ROUND_HALF_DOWN);
+            $roundedDiff = \round($diff, 0, PHP_ROUND_HALF_DOWN);
         } else {
-            $roundedDiff = round($diff);
+            $roundedDiff = \round($diff);
         }
 
-        $this->numberValue = bcadd(
+        $this->numberValue = \bcadd(
             $floored,
             $roundedDiff,
             0
@@ -419,7 +419,7 @@ class BigNumber extends AbstractBigNumber
     public function setValue($number)
     {
         // Set the scale for the number to the scale value passed in
-        $number = bcadd(
+        $number = \bcadd(
             $this->filterNumber($number),
             '0',
             $this->getScale()
@@ -438,9 +438,9 @@ class BigNumber extends AbstractBigNumber
      */
     public function shiftLeft($bits)
     {
-        $this->numberValue = bcmul(
+        $this->numberValue = \bcmul(
             $this->numberValue,
-            bcpow('2', $bits)
+            \bcpow('2', $bits)
         );
 
         return $this;
@@ -454,9 +454,9 @@ class BigNumber extends AbstractBigNumber
      */
     public function shiftRight($bits)
     {
-        $this->numberValue = bcdiv(
+        $this->numberValue = \bcdiv(
             $this->numberValue,
-            bcpow('2', $bits)
+            \bcpow('2', $bits)
         );
 
         return $this;
@@ -470,7 +470,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function sqrt()
     {
-        $this->numberValue = bcsqrt(
+        $this->numberValue = \bcsqrt(
             $this->numberValue,
             $this->getScale()
         );
@@ -488,7 +488,7 @@ class BigNumber extends AbstractBigNumber
      */
     public function subtract($number)
     {
-        $this->numberValue = bcsub(
+        $this->numberValue = \bcsub(
             $this->numberValue,
             $this->filterNumber($number),
             $this->getScale()
@@ -505,7 +505,7 @@ class BigNumber extends AbstractBigNumber
      */
     protected function filterNumber($number)
     {
-        return filter_var(
+        return \filter_var(
             $number,
             FILTER_SANITIZE_NUMBER_FLOAT,
             FILTER_FLAG_ALLOW_FRACTION
