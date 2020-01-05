@@ -1,18 +1,7 @@
 language: php
+os: linux
 
-php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-  - 7.3
-  - 7.4
-  - nightly
-
-matrix:
+jobs:
   include:
     - php: 5.3
       dist: precise
@@ -21,9 +10,9 @@ matrix:
       env:
         - BCMATH="off"
     - php: 5.4
-      dist: precise
+      dist: trusty
     - php: 5.4
-      dist: precise
+      dist: trusty
       env:
         - BCMATH="off"
     - php: 5.5
@@ -33,39 +22,29 @@ matrix:
       env:
         - BCMATH="off"
     - php: 5.6
-      dist: xenial
     - php: 5.6
-      dist: xenial
       env:
         - BCMATH="off"
     - php: 7.0
-      dist: xenial
     - php: 7.0
-      dist: xenial
       env:
         - BCMATH="off"
     - php: 7.1
-      dist: xenial
     - php: 7.1
-      dist: xenial
       env:
         - BCMATH="off"
     - php: 7.2
-      dist: xenial
     - php: 7.2
-      dist: xenial
       env:
         - BCMATH="off"
     - php: 7.3
-      dist: xenial
     - php: 7.3
-      dist: xenial
       env:
         - BCMATH="off"
-  allow_failures:
-    - php: nightly
-
-sudo: false
+    - php: 7.4
+    - php: 7.4
+      env:
+        - BCMATH="off"
 
 before_install:
   - if [[ $BCMATH == "off" ]]; then
